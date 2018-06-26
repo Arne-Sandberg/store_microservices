@@ -1,0 +1,22 @@
+[
+  {
+    "model": "src.Product",
+    "pk": 1,
+    "fields": {
+      "name": "Surfboard 6'6 Travis",
+      "code": "XFABSH452G7AHAHS",
+      "price": 325.34,
+      "description": "Shortboard fast"
+    }
+  },
+  {
+    "model": "src.Product",
+    "pk": 2,
+    "fields": {
+      "name": "Surfboard 6'2 Then",
+      "code": "XFABSH4AH77AHAHS",
+      "price": 251.19,
+      "description": "Softboard fun"
+    }
+  }
+]

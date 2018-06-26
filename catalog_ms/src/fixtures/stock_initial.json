@@ -1,0 +1,20 @@
+[
+  {
+    "model": "src.stock",
+    "pk": 1,
+    "fields": {
+      "product": 1,
+      "quantity": 3,
+      "location": "Mafra, PT"
+    }
+  },
+  {
+    "model": "src.stock",
+    "pk": 2,
+    "fields": {
+      "product": 2,
+      "quantity": 5,
+      "location": "Ericeira, PT"
+    }
+  }
+]

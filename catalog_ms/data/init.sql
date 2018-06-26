@@ -1,0 +1,3 @@
+CREATE USER stefano;
+CREATE DATABASE catalog;
+GRANT ALL PRIVILEGES ON DATABASE catalog TO stefano;
