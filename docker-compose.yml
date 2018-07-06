@@ -1,0 +1,122 @@
+version: '3'
+services:
+
+  redis:
+    image: redis
+
+  # CATALOG
+  catalog_ms:
+    build: ./catalog_ms/
+#    command: bash -c "python manage.py migrate
+#      && sleep 10
+#      && celery -A catalog_ms worker --loglevel=info
+#      && python manage.py runserver 0.0.0.0:8000"
+    command: ./run_web.sh
+    ports:
+    - "8001:8000"
+    volumes:
+    - ./catalog_ms/:/app/src/
+    depends_on:
+    - catalog_db
+    - catalog_rabbit
+    restart: unless-stopped
+  catalog_db:
+    build: ./catalog_ms/data/
+    restart: always
+    ports:
+    - "8011:5432"
+    volumes:
+    - ./catalog_ms/data/postgres-data:/var/lib/postgresql/data
+  catalog_rabbit:
+    hostname: catalog_rabbit
+    image: rabbitmq
+    environment:
+    - RABBITMQ_DEFAULT_USER=stefano
+    - RABBITMQ_DEFAULT_PASS=stefano
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    depends_on:
+    - redis
+  catalog_worker:
+    build: ./catalog_ms/
+    command: ./run_celery.sh
+#    ports:
+#    - "8089:8080"
+    volumes:
+    - ./catalog_ms/:/app/src/
+    depends_on:
+    - catalog_rabbit
+    - redis
+    restart: unless-stopped
+
+  # ORDER
+  order_ms:
+    build: ./order_ms/
+    command: bash -c "sleep 10
+      && python manage.py migrate
+      && python manage.py runserver 0.0.0.0:8000"
+    ports:
+    - "8002:8000"
+    volumes:
+    - ./order_ms/:/app/src/
+    depends_on:
+    - order_db
+    - order_rabbit
+    restart: unless-stopped
+  order_db:
+    build: ./order_ms/data/
+    restart: always
+    ports:
+    - "8012:5432"
+    volumes:
+    - ./order_ms/data/postgres-data:/var/lib/postgresql/data
+  order_rabbit:
+    hostname: order_rabbit
+    image: rabbitmq
+    environment:
+    - RABBITMQ_DEFAULT_USER=stefano
+    - RABBITMQ_DEFAULT_PASS=stefano
+    ports:
+    - "5673:5672"
+    - "15673:15672"
+    depends_on:
+    - redis
+  order_worker:
+    build: ./order_ms/
+    command: ./run_celery.sh
+    volumes:
+    - ./order_ms/:/app/src/
+    depends_on:
+    - order_rabbit
+    - redis
+    restart: unless-stopped
+
+#  # PROFILE
+#  profile_ms:
+#    build: ./profile_ms/
+#    ports:
+#    - "8002:8000"
+#    volumes:
+#    - ./profile_ms/:/app/src/
+#    depends_on:
+#    - profile_db
+#  profile_db:
+#    build: ./profile_ms/data/
+#    restart: always
+#    ports:
+#    - "8012:5432"
+#    volumes:
+#    - ./profile_ms/data/postgres-data:/var/lib/postgresql/data
+
+#  # FRONTEND
+#  frontend_ms:
+#    build: ./frontend_ms/
+#    ports:
+#    - "3000:3000"
+#    links:
+#    - profile_ms
+#    - catalog_ms
+#    volumes:
+#    - ./frontend_ms/:/app/src/
+#    depends_on: ["profile_ms", "catalog_ms"]

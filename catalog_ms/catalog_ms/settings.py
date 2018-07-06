@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'corsheaders',
     'src',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,23 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Redis
+
+REDIS_PORT = 6379
+REDIS_DB = 0
+REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', 'redis')
+
+CELERY_BROKER_URL = 'amqp://stefano:stefano@catalog_rabbit:5672'
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+CELERY_RESULT_BACKEND = 'django-cache'
+
+# Set redis as celery result backend
+CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)
+CELERY_REDIS_MAX_CONNECTIONS = 1
+
+# Don't use pickle as serializer, json is much safer
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ['application/json']
