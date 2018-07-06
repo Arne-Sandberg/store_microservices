@@ -1,4 +1,6 @@
+from django.http import HttpResponse
 from django.http import JsonResponse
+from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
 
@@ -34,3 +36,10 @@ class ProductListView(ListView):
     def get(self, request, *args, **kwargs):
         data = _serialize_catalog_(self.get_queryset())
         return JsonResponse(data, status=200, safe=False)
+
+
+class ExecuteTaskView(View):
+    def get(self, request, *args, **kwargs):
+        from .tasks import decrease_stock_quantity
+        decrease_stock_quantity.delay(self.kwargs.get('pk'))
+        return HttpResponse('All good')
