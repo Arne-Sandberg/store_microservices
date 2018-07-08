@@ -16,5 +16,41 @@
       "quantity": 5,
       "location": "Ericeira, PT"
     }
+  },
+  {
+    "model": "src.stock",
+    "pk": 3,
+    "fields": {
+      "product": 3,
+      "quantity": 72,
+      "location": "Estoril, PT"
+    }
+  },
+  {
+    "model": "src.stock",
+    "pk": 4,
+    "fields": {
+      "product": 4,
+      "quantity": 0,
+      "location": "Cascais, PT"
+    }
+  },
+  {
+    "model": "src.stock",
+    "pk": 5,
+    "fields": {
+      "product": 5,
+      "quantity": 1,
+      "location": "Malveira, PT"
+    }
+  },
+  {
+    "model": "src.stock",
+    "pk": 6,
+    "fields": {
+      "product": 6,
+      "quantity": 15,
+      "location": "Carcavelos, PT"
+    }
   }
 ]

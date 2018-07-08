@@ -18,5 +18,45 @@
       "price": 251.19,
       "description": "Softboard fun"
     }
+  },
+  {
+    "model": "src.Product",
+    "pk": 3,
+    "fields": {
+      "name": "Surfboard 6'3 Travis",
+      "code": "XFAADSDSDSSDHAHS",
+      "price": 89.34,
+      "description": "Second hand, very good state. Fast and fun!"
+    }
+  },
+  {
+    "model": "src.Product",
+    "pk": 4,
+    "fields": {
+      "name": "Softboard 8' Feed",
+      "code": "AJANJNJNUWB2J",
+      "price": 127.21,
+      "description": "Softboard, long, fun, mellow"
+    }
+  },
+  {
+    "model": "src.Product",
+    "pk": 5,
+    "fields": {
+      "name": "SUP 10' Reed",
+      "code": "SUP274739HDBWHS",
+      "price": 532.12,
+      "description": "SUP"
+    }
+  },
+  {
+    "model": "src.Product",
+    "pk": 6,
+    "fields": {
+      "name": "Bodyboard 3'2 Mart",
+      "code": "BODY2HDBD#@J@",
+      "price": 432.99,
+      "description": "Bodyboard, short, fun, fast"
+    }
   }
 ]
