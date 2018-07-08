@@ -92,6 +92,18 @@ services:
     - redis
     restart: unless-stopped
 
+  # NGINX
+  nginx:
+    build: ./nginx/
+    volumes:
+    - ./nginx/config/:/etc/nginx/conf.d/
+    ports:
+    - "9001:80"
+    depends_on:
+    - catalog_ms
+    - order_ms
+    restart: unless-stopped
+
 #  # PROFILE
 #  profile_ms:
 #    build: ./profile_ms/
@@ -109,14 +121,14 @@ services:
 #    volumes:
 #    - ./profile_ms/data/postgres-data:/var/lib/postgresql/data
 
-#  # FRONTEND
-#  frontend_ms:
-#    build: ./frontend_ms/
-#    ports:
-#    - "3000:3000"
-#    links:
-#    - profile_ms
-#    - catalog_ms
-#    volumes:
-#    - ./frontend_ms/:/app/src/
-#    depends_on: ["profile_ms", "catalog_ms"]
+  # FRONTEND
+  frontend_ms:
+    build: ./frontend_ms/
+    ports:
+    - "3000:3000"
+    links:
+    - order_ms
+    - catalog_ms
+    volumes:
+    - ./frontend_ms/:/app/src/
+    depends_on: ["order_ms", "catalog_ms", "nginx"]
