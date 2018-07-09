@@ -41,6 +41,7 @@ class ProductList extends Component {
     render() {
         return (
             <div>
+                <h1>Store</h1>
                 <ul className="ProductList">
                     {this.state.store_products.map((product) =>
                         <ProductListItem key={product.code}
@@ -49,7 +50,8 @@ class ProductList extends Component {
                                          description={product.description}
                                          code={product.code}
                                          quantity={product.quantity}
-                                         location={product.location}/>
+                                         location={product.location}
+                                         product_id={product.id}/>
                     )}
                 </ul>
                 <div>{this.state.errorMessage}</div>

@@ -121,6 +121,29 @@ services:
 #    volumes:
 #    - ./profile_ms/data/postgres-data:/var/lib/postgresql/data
 
+  # PROFILE
+  profile_ms:
+    build: ./profile_ms/
+#    command: bash -c "python manage.py migrate
+#      && sleep 10
+#      && celery -A catalog_ms worker --loglevel=info
+#      && python manage.py runserver 0.0.0.0:8000"
+    command: ./run_web.sh
+    ports:
+    - "8003:8000"
+    volumes:
+    - ./profile_ms/:/app/src/
+    depends_on:
+    - profile_db
+    restart: unless-stopped
+  profile_db:
+    build: ./profile_ms/data/
+    restart: always
+    ports:
+    - "8013:5432"
+    volumes:
+    - ./profile_ms/data/postgres-data:/var/lib/postgresql/data
+
   # FRONTEND
   frontend_ms:
     build: ./frontend_ms/

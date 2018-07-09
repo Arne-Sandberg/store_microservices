@@ -23,7 +23,8 @@ def _serialize_catalog_(queryset):
                                 'description': object.description,
                                 'code': object.code,
                                 'quantity': object.stock.quantity,
-                                'location': object.stock.location
+                                'location': object.stock.location,
+                                'id': object.id
                                 })
     return data
 

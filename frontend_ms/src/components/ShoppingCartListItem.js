@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../static/css/ProductListItem.css';
 import Illustration from './Illustration';
 
-class ProductListItem extends Component {
+class ShoppingCartListItem extends Component {
 
     constructor(props) {
         super(props);
@@ -50,14 +50,9 @@ class ProductListItem extends Component {
                     <p>Available: {(this.props.quantity > 0) ? 'Yes' : 'No'}</p>
                     <p>Location: {this.props.location}</p>
                 </div>
-                <div className="wrapper">
-                    <button onClick={() => this.handleClick(this.props.product_id)}>
-                        Buy Me
-                    </button>
-                </div>
             </div>
         );
     }
 }
 
-export default ProductListItem;
+export default ShoppingCartListItem;
