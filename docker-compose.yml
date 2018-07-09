@@ -16,6 +16,7 @@ services:
     - "8001:8000"
     volumes:
     - ./catalog_ms/:/app/src/
+    - ./catalog_ms/logs/:/var/log/django/
     depends_on:
     - catalog_db
     - catalog_rabbit
@@ -41,8 +42,6 @@ services:
   catalog_worker:
     build: ./catalog_ms/
     command: ./run_celery.sh
-#    ports:
-#    - "8089:8080"
     volumes:
     - ./catalog_ms/:/app/src/
     depends_on:
@@ -60,6 +59,7 @@ services:
     - "8002:8000"
     volumes:
     - ./order_ms/:/app/src/
+    - ./order_ms/logs/:/var/log/django/
     depends_on:
     - order_db
     - order_rabbit
@@ -93,7 +93,7 @@ services:
     restart: unless-stopped
 
   # NGINX
-  nginx:
+  nginxx:
     build: ./nginx/
     volumes:
     - ./nginx/config/:/etc/nginx/conf.d/
@@ -103,23 +103,6 @@ services:
     - catalog_ms
     - order_ms
     restart: unless-stopped
-
-#  # PROFILE
-#  profile_ms:
-#    build: ./profile_ms/
-#    ports:
-#    - "8002:8000"
-#    volumes:
-#    - ./profile_ms/:/app/src/
-#    depends_on:
-#    - profile_db
-#  profile_db:
-#    build: ./profile_ms/data/
-#    restart: always
-#    ports:
-#    - "8012:5432"
-#    volumes:
-#    - ./profile_ms/data/postgres-data:/var/lib/postgresql/data
 
   # PROFILE
   profile_ms:
@@ -133,6 +116,7 @@ services:
     - "8003:8000"
     volumes:
     - ./profile_ms/:/app/src/
+    - ./profile_ms/logs/:/var/log/django/
     depends_on:
     - profile_db
     restart: unless-stopped
@@ -155,3 +139,98 @@ services:
     volumes:
     - ./frontend_ms/:/app/src/
     depends_on: ["order_ms", "catalog_ms", "nginx"]
+
+
+  wazuh:
+    image: wazuh/wazuh
+    hostname: wazuh-manager
+    restart: always
+    ports:
+      - "1514:1514/udp"
+      - "1515:1515"
+      - "514:514/udp"
+      - "55000:55000"
+#      - "1516:1516"
+    networks:
+        - docker_elk
+#    volumes:
+#      - catalog_ms/logs/debug.log:/var/logs/catalog_ms/debug.log
+#      - profile_ms/logs/debug.log:/var/logs/profile_ms/debug.log
+#      - order_ms/logs/debug.log:/var/logs/order_ms/debug.log
+#      - my-custom-config-path/ossec.conf:/wazuh-config-mount/etc/ossec.conf
+    depends_on:
+      - logstash
+  logstash:
+    image: wazuh/wazuh-logstash
+    hostname: logstash
+    restart: always
+#    volumes:
+#      - my-path:/etc/logstash/conf.d:Z
+    volumes:
+      - ./catalog_ms/logs/debug.log:/var/logs/catalog_ms/debug.log
+      - ./profile_ms/logs/debug.log:/var/logs/profile_ms/debug.log
+      - ./order_ms/logs/debug.log:/var/logs/order_ms/debug.log
+    links:
+      - elasticsearch:elasticsearch
+    ports:
+      - "5000:5000"
+    networks:
+      - docker_elk
+    depends_on:
+      - elasticsearch
+    environment:
+      - LS_HEAP_SIZE=2048m
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
+    hostname: elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+#      - "9300:9300"
+    environment:
+      - node.name=node-1
+      - cluster.name=wazuh
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+#    volumes:
+#      - my-path:/usr/share/elasticsearch/data:Z
+    networks:
+        - docker_elk
+  kibana:
+    image: wazuh/wazuh-kibana
+    hostname: kibana
+    restart: always
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    networks:
+      - docker_elk
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch:elasticsearch
+      - wazuh:wazuh
+  nginx:
+    image: wazuh/wazuh-nginx
+    hostname: nginx
+    restart: always
+    environment:
+      - NGINX_PORT=443
+    ports:
+      - "81:80"
+      - "444:443"
+#    volumes:
+#      - my-path:/etc/nginx/conf.d:Z
+    depends_on:
+      - kibana
+    links:
+      - kibana:kibana
+
+networks:
+  docker_elk:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.25.0.0/24

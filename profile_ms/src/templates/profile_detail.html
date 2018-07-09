@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p>Welcome, {{object.user.username}}</p>
+    <p>Your address is:</p>
+    <p>{{ object.address_street }} {{ object.address_number }}</p>
+    <p>{{ object.address_city }} - {{ object.address_postcode }}</p>
+    <p><b>{{object.user.profile.address_nation}}</b></p>
+</body>
+</html>

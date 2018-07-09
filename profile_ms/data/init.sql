@@ -1,0 +1,3 @@
+CREATE USER stefano;
+CREATE DATABASE profile;
+GRANT ALL PRIVILEGES ON DATABASE profile TO stefano;

@@ -32,7 +32,7 @@ class Homepage extends Component {
 
     loadUserData() {
 
-        axios.get('http://localhost:8001/profile/' + localStorage.user_id, {
+        axios.get('http://localhost:8003/profile/' + localStorage.user_id, {
             headers: {
                 'Authorization': 'Token ' + localStorage.token
             },
